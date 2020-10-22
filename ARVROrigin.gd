@@ -60,10 +60,10 @@ func _process(delta_t):
 	_check_move(delta_t)
 	_check_worldscale()
 	_update_controllers_vibration(delta_t)
-	if fix_hand_position: 
-		_process_mouse_rotation()
-	else:
-		_process_6dof_joystick_turns()
+#	if fix_hand_position: 
+#		_process_mouse_rotation()
+#	else:
+#		_process_6dof_joystick_turns()
 	_process_keys()
 	
 	
@@ -147,6 +147,10 @@ func _initialize_openvr_arvr_interface():
 			OS.vsync_enabled = false
 			Engine.target_fps = 90	
 			Engine.iterations_per_second = 90
+			$LeftTouchController/left_hand_model.translation = Vector3(0,0,0.2)
+			$LeftTouchController/left_hand_model.rotation_degrees = Vector3(0,-90,220)
+			$RightTouchController/right_hand_model.translation = Vector3(0,0,0.2)
+			$RightTouchController/right_hand_model.rotation_degrees = Vector3(0,-90,40)
 			return true
 		else:
 			print("Couldn't initialize OpenVR")
