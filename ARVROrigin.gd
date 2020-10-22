@@ -1,21 +1,7 @@
-# ARVROriginWithInitAndMove.[tscn/gd]
-#
-# This is an example implementaiton on how to initialize the Oculus Mobile Plugin (godot_ovrmobile)
-# It can be used as a drop-in solution for quick testing or modified to your needs
-# It shows some of the common things needed to interact with the Godot Oculus Mobile Plugin
-#
 # To view log/print messages use `adb logcat -s godot:* GodotOVRMobile:*` from a command prompt
 extends ARVROrigin
 
-
-# these will be initialized in the _ready() function; but they will be only available
-# on device
-# the init config is needed for setting parameters that are needed before the VR system starts up
 var ovr_init_config = null;
-
-
-# the other APIs are available during runtime; details about the exposed functions can be found
-# in the *.h files in https://github.com/GodotVR/godot_oculus_mobile/tree/master/src/config
 var ovr_performance = null;
 var ovr_display_refresh_rate = null;
 var ovr_guardian_system = null;
@@ -24,13 +10,9 @@ var ovr_utilities = null;
 var ovr_vr_api_proxy = null;
 var ovr_input = null;
 
-# Dictionary tracking the remaining duration for controllers vibration
+
 var controllers_vibration_duration = {}
-
-# some of the Oculus VrAPI constants are defined in this file. Have a look into it to learn more
 var ovrVrApiTypes = load("res://addons/godot_ovrmobile/OvrVrApiTypes.gd").new();
-
-# react to the worldscale changing
 var was_world_scale = 1.0
 
 var fix_hand_position = false
@@ -46,8 +28,7 @@ func _ready():
 			else:
 				self.transform.origin.y = 1.85
 				fix_hand_position = true
-				#$LeftTouchController.transform.origin=Vector3(-0.2,-0.1,-0.2)
-				#$RightTouchController.transform.origin=Vector3(0.2,-0.1,-0.2)
+
 
 
 var _mouse_offset = Vector2()
@@ -79,7 +60,10 @@ func _process(delta_t):
 	_check_move(delta_t)
 	_check_worldscale()
 	_update_controllers_vibration(delta_t)
-	if fix_hand_position: _process_mouse_rotation()
+	if fix_hand_position: 
+		_process_mouse_rotation()
+	else:
+		_process_6dof_joystick_turns()
 	_process_keys()
 	
 	
@@ -106,6 +90,38 @@ func _process_mouse_rotation():
 	$RightTouchController.rotation = $ARVRCamera.rotation
 	$RightTouchController.translation = Vector3(0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftTouchController.rotation.x).rotated(Vector3.UP, $LeftTouchController.rotation.y)
 	
+export var quick_turn_degrees=45
+var _joy_centered=true
+
+func _process_6dof_joystick_turns():
+	var offset = Vector2(0,0)
+	if $RightTouchController.get_is_active():
+		var x = $RightTouchController.get_joystick_axis(0)
+		if quick_turn_degrees==0:
+			offset.x = x
+		else:
+			if _joy_centered:
+				if x > 0.2:
+					offset.x = quick_turn_degrees
+					_joy_centered = false
+				elif x < -0.2:
+					offset.x = -quick_turn_degrees
+					_joy_centered = false
+			else:
+				if x <= 0.2 and x >= -0.2:
+					_joy_centered = true
+	else:
+		offset.x=Input.get_action_strength("rotate_right") - Input.get_action_strength("rotate_left")
+	_yaw = _yaw * smoothness + offset.x * (1.0 - smoothness)
+	if yaw_limit < 360:
+		_yaw = clamp(_yaw, -yaw_limit - _total_yaw, yaw_limit - _total_yaw)
+	_total_yaw += _yaw
+	
+	self.translate($ARVRCamera.translation)
+	self.rotate_y(deg2rad(-_yaw))	
+	self.translate(-$ARVRCamera.translation)
+	
+
 func _process_keys():
 	if Input.is_action_just_pressed("quit"):
 		get_tree().quit()
@@ -136,26 +152,21 @@ func _initialize_openvr_arvr_interface():
 			print("Couldn't initialize OpenVR")
 	return false
 
-# this code check for the OVRMobile inteface; and if successful also initializes the
-# .gdns APIs used to communicate with the VR device
+
 func _initialize_ovr_mobile_arvr_interface():
-	# Find the OVRMobile interface and initialise it if available
 	var arvr_interface = ARVRServer.find_interface("OVRMobile")
 	if !arvr_interface:
 		print("Couldn't find OVRMobile interface")
 	else:
-		# the init config needs to be done before arvr_interface.initialize()
 		ovr_init_config = load("res://addons/godot_ovrmobile/OvrInitConfig.gdns");
 		if (ovr_init_config):
 			ovr_init_config = ovr_init_config.new()
 			ovr_init_config.set_render_target_size_multiplier(1) # setting to 1 here is the default
 
-		# Configure the interface init parameters.
 		if arvr_interface.initialize():
 			get_viewport().arvr = true
 			Engine.iterations_per_second = 72 # Quest
 
-			# load the .gdns classes.
 			ovr_display_refresh_rate = load("res://addons/godot_ovrmobile/OvrDisplayRefreshRate.gdns");
 			ovr_guardian_system = load("res://addons/godot_ovrmobile/OvrGuardianSystem.gdns");
 			ovr_performance = load("res://addons/godot_ovrmobile/OvrPerformance.gdns");
@@ -164,7 +175,7 @@ func _initialize_ovr_mobile_arvr_interface():
 			ovr_vr_api_proxy = load("res://addons/godot_ovrmobile/OvrVrApiProxy.gdns");
 			ovr_input = load("res://addons/godot_ovrmobile/OvrInput.gdns")
 
-			# and now instance the .gdns classes for use if load was successfull
+
 			if (ovr_display_refresh_rate): ovr_display_refresh_rate = ovr_display_refresh_rate.new()
 			if (ovr_guardian_system): ovr_guardian_system = ovr_guardian_system.new()
 			if (ovr_performance): ovr_performance = ovr_performance.new()
@@ -173,7 +184,6 @@ func _initialize_ovr_mobile_arvr_interface():
 			if (ovr_vr_api_proxy): ovr_vr_api_proxy = ovr_vr_api_proxy.new()
 			if (ovr_input): ovr_input = ovr_input.new()
 
-			# Connect to the plugin signals
 			_connect_to_signals()
 
 			print("Loaded OVRMobile")
@@ -232,9 +242,8 @@ func _check_and_perform_runtime_config():
 	if _performed_runtime_config: return
 
 	if (ovr_performance):
-		# these are some examples of using the ovr .gdns APIs
-		ovr_performance.set_clock_levels(1, 1)
-		ovr_performance.set_extra_latency_mode(ovrVrApiTypes.OvrExtraLatencyMode.VRAPI_EXTRA_LATENCY_MODE_ON)
+		#ovr_performance.set_clock_levels(1, 1)
+		#ovr_performance.set_extra_latency_mode(ovrVrApiTypes.OvrExtraLatencyMode.VRAPI_EXTRA_LATENCY_MODE_ON)
 		ovr_performance.set_foveation_level(2);  # 0 == off; 4 == highest
 
 	_performed_runtime_config = true
@@ -336,8 +345,7 @@ enum CONTROLLER_BUTTON {
 
 # this is a function connected to the button release signal from the controller
 func _on_LeftTouchController_button_pressed(button):
-	print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
-
+	
 	if (button == CONTROLLER_BUTTON.YB):
 		# examples on using the ovr api from gdscript
 		if (ovr_guardian_system):
@@ -359,6 +367,7 @@ func _on_LeftTouchController_button_pressed(button):
 
 		if (ovr_utilities):
 			print(" ovr_utilities.get_ipd() == " + str(ovr_utilities.get_ipd()));
+			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
 
 			# you can access the accelerations and velocitys for the head and controllers
 			# that are predicted by the Oculus VrApi via these funcitons:
@@ -373,10 +382,10 @@ func _on_LeftTouchController_button_pressed(button):
 		_start_controller_vibration($LeftTouchController, 40, 0.5)
 
 func _on_RightTouchController_button_pressed(button):
-	print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
-
+	
 	if (button == CONTROLLER_BUTTON.YB):
 		if (ovr_utilities):
+			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
 			# use this for fade to black for example: here we just do a color change
 			ovr_utilities.set_default_layer_color_scale(Color(0.5, 0.0, 1.0, 1.0));
 

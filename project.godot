@@ -19,10 +19,6 @@ config/name="godot_quest_example"
 run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
 
-[display]
-
-window/size/fullscreen=true
-
 [gdnative]
 
 singletons=[ "res://addons/godot-openvr/godot_openvr.gdnlib", "res://addons/godot_ovrmobile/godot_ovrmobile.gdnlib" ]
