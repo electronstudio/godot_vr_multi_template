@@ -17,17 +17,21 @@ var was_world_scale = 1.0
 
 var fix_hand_position = false
 
+const mobile_test = false
+
 func _ready():
 	var ovr = _initialize_ovr_mobile_arvr_interface()
 	if not ovr:
 		var openvr = _initialize_openvr_arvr_interface()
 		if not openvr:
-			if OS.get_name()=="Android" or OS.get_name()=="iOS":
+			if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
 				var nm = _initialize_native_mobile_arvr_interface()
 				fix_hand_position = true
 			else:
 				self.transform.origin.y = 1.85
 				fix_hand_position = true
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				
 
 
 
@@ -60,10 +64,10 @@ func _process(delta_t):
 	_check_move(delta_t)
 	_check_worldscale()
 	_update_controllers_vibration(delta_t)
-#	if fix_hand_position: 
-#		_process_mouse_rotation()
-#	else:
-#		_process_6dof_joystick_turns()
+	if fix_hand_position: 
+		_process_mouse_rotation()
+	else:
+		_process_6dof_joystick_turns()
 	_process_keys()
 	
 	
