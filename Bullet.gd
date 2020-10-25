@@ -8,9 +8,13 @@ extends Spatial
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	translate(Vector3(0,0,-0.5))
+	translate(Vector3(0,0,-0.2))
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	translate(Vector3(0,0,delta*-5))
+
+
+func _on_Timer_timeout():
+	queue_free()

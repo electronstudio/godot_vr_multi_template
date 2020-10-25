@@ -17,22 +17,7 @@ var was_world_scale = 1.0
 
 var fix_hand_position = false
 
-const mobile_test = false
-
-func _ready():
-	var ovr = _initialize_ovr_mobile_arvr_interface()
-	if not ovr:
-		var openvr = _initialize_openvr_arvr_interface()
-		if not openvr:
-			if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
-				var nm = _initialize_native_mobile_arvr_interface()
-				fix_hand_position = true
-			else:
-				self.transform.origin.y = 1.85
-				fix_hand_position = true
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-				
-
+export var mobile_test = true
 
 
 var _mouse_offset = Vector2()
@@ -51,8 +36,27 @@ export (int, 0, 360) var yaw_limit = 360
 export (int, 0, 360) var pitch_limit = 360
 
 
-
 export var move_speed = 1.0
+
+export var quick_turn_degrees=45
+var _joy_centered=true
+
+
+func _ready():
+	var ovr = _initialize_ovr_mobile_arvr_interface()
+	if not ovr:
+		var openvr = _initialize_openvr_arvr_interface()
+		if not openvr:
+			if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
+				var nm = _initialize_native_mobile_arvr_interface()
+				fix_hand_position = true
+			else:
+				self.transform.origin.y = 1.85
+				fix_hand_position = true
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				
+
+
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -88,14 +92,15 @@ func _process_mouse_rotation():
 	$ARVRCamera.rotate_y(deg2rad(-_yaw))
 	$ARVRCamera.rotate_object_local(Vector3(1,0,0), deg2rad(-_pitch))
 	
-	$LeftTouchController.rotation = $ARVRCamera.rotation
-	$LeftTouchController.translation = Vector3(-0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftTouchController.rotation.x).rotated(Vector3.UP, $LeftTouchController.rotation.y)
+	$LeftTouchController.transform = $ARVRCamera.transform
+	$LeftTouchController.translate(Vector3(-0.2,-0.1,-0.2))
+	#$LeftTouchController.rotation = $ARVRCamera.rotation
+	#$LeftTouchController.translation = Vector3(-0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftTouchController.rotation.x).rotated(Vector3.UP, $LeftTouchController.rotation.y)
 	
-	$RightTouchController.rotation = $ARVRCamera.rotation
-	$RightTouchController.translation = Vector3(0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftTouchController.rotation.x).rotated(Vector3.UP, $LeftTouchController.rotation.y)
+	$RightTouchController.transform = $ARVRCamera.transform
+	$RightTouchController.translate(Vector3(0.2,-0.1,-0.2))
 	
-export var quick_turn_degrees=45
-var _joy_centered=true
+
 
 func _process_6dof_joystick_turns():
 	var offset = Vector2(0,0)
@@ -134,10 +139,19 @@ func _process_keys():
 		ARVRServer.center_on_hmd(true, true)
 
 func _initialize_native_mobile_arvr_interface():
+	print("initialize_native_mobile_arvr_interface")
 	var arvr_interface = ARVRServer.find_interface("Native mobile")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
+#		arvr_interface.display_to_lens = 5.463120713829994
+#		#arvr_interface.display_width = 14.5
+#		arvr_interface.iod = 6.1512745916843414
+#		arvr_interface.k1 = 0.40400490164756775
+#		arvr_interface.k2 = 0.4847533404827118
+#		arvr_interface.oversample = 1.5
+		print("success")
 		return true
+	print("fail to init")
 	return false
 
 func _initialize_openvr_arvr_interface():
@@ -333,19 +347,20 @@ func _check_worldscale():
 # godot itself also exposes some of these constants via JOY_VR_* and JOY_OCULUS_*
 # this enum here is to document everything in place and includes the touch event mappings
 enum CONTROLLER_BUTTON {
+	_0 = 0
 	YB = 1,
 	GRIP_TRIGGER = 2, # grip trigger pressed over threshold
 	ENTER = 3, # Menu Button on left controller
-
+	_4 = 4,
 	TOUCH_XA = 5,
 	TOUCH_YB = 6,
-
 	XA = 7,
-
+	_8 = 8,
+	_9 = 9,
 	TOUCH_THUMB_UP = 10,
 	TOUCH_INDEX_TRIGGER = 11,
 	TOUCH_INDEX_POINTING = 12,
-
+	_13 = 13
 	THUMBSTICK = 14, # left/right thumb stick pressed
 	INDEX_TRIGGER = 15, # index trigger pressed over threshold
 }
@@ -354,61 +369,67 @@ enum CONTROLLER_BUTTON {
 # this is a function connected to the button release signal from the controller
 func _on_LeftTouchController_button_pressed(button):
 	
-	if (button == CONTROLLER_BUTTON.YB):
-		# examples on using the ovr api from gdscript
-		if (ovr_guardian_system):
-			print(" ovr_guardian_system.get_boundary_visible() == " + str(ovr_guardian_system.get_boundary_visible()));
-			#ovr_guardian_system.request_boundary_visible(true); # make the boundary always visible
-
-			# the oriented bounding box is the largest box that fits into the currently defined guardian
-			# the return value of this function is an array with [Transform(), Vector3()] where the Vector3
-			# is the scale of the box and Transform contains the position and orientation of the box.
-			# The height is not yet tracked by the oculus system and will be a default value.
-			print(" ovr_guardian_system.get_boundary_oriented_bounding_box() == " + str(ovr_guardian_system.get_boundary_oriented_bounding_box()));
-
-		if (ovr_tracking_transform):
-			print(" ovr_tracking_transform.get_tracking_space() == " + str(ovr_tracking_transform.get_tracking_space()));
-
-			# you can change the tracking space to control where the default floor level is and
-			# how recentring should behave.
-			#ovr_guardian_system.set_tracking_space(ovrVrApiTypes.OvrTrackingSpace.VRAPI_TRACKING_SPACE_STAGE);
-
-		if (ovr_utilities):
-			print(" ovr_utilities.get_ipd() == " + str(ovr_utilities.get_ipd()));
-			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
-
-			# you can access the accelerations and velocitys for the head and controllers
-			# that are predicted by the Oculus VrApi via these funcitons:
-			var controller_id = $LeftTouchController.controller_id;
-			print(" ovr_utilities.get_controller_linear_velocity(controller_id) == " + str(ovr_utilities.get_controller_linear_velocity(controller_id)));
-			print(" ovr_utilities.get_controller_linear_acceleration(controller_id) == " + str(ovr_utilities.get_controller_linear_acceleration(controller_id)));
-			print(" ovr_utilities.get_controller_angular_velocity(controller_id) == " + str(ovr_utilities.get_controller_angular_velocity(controller_id)));
-			print(" ovr_utilities.get_controller_angular_acceleration(controller_id) == " + str(ovr_utilities.get_controller_angular_acceleration(controller_id)));
-
-	if (button == CONTROLLER_BUTTON.XA):
-		ARVRServer.center_on_hmd(true, true)
-		_start_controller_vibration($LeftTouchController, 40, 0.5)
+	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
+	Input.action_press(action)
+	
+#	if (button == CONTROLLER_BUTTON.YB):
+#		# examples on using the ovr api from gdscript
+#		if (ovr_guardian_system):
+#			print(" ovr_guardian_system.get_boundary_visible() == " + str(ovr_guardian_system.get_boundary_visible()));
+#			#ovr_guardian_system.request_boundary_visible(true); # make the boundary always visible
+#
+#			# the oriented bounding box is the largest box that fits into the currently defined guardian
+#			# the return value of this function is an array with [Transform(), Vector3()] where the Vector3
+#			# is the scale of the box and Transform contains the position and orientation of the box.
+#			# The height is not yet tracked by the oculus system and will be a default value.
+#			print(" ovr_guardian_system.get_boundary_oriented_bounding_box() == " + str(ovr_guardian_system.get_boundary_oriented_bounding_box()));
+#
+#		if (ovr_tracking_transform):
+#			print(" ovr_tracking_transform.get_tracking_space() == " + str(ovr_tracking_transform.get_tracking_space()));
+#
+#			# you can change the tracking space to control where the default floor level is and
+#			# how recentring should behave.
+#			#ovr_guardian_system.set_tracking_space(ovrVrApiTypes.OvrTrackingSpace.VRAPI_TRACKING_SPACE_STAGE);
+#
+#		if (ovr_utilities):
+#			print(" ovr_utilities.get_ipd() == " + str(ovr_utilities.get_ipd()));
+#			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
+#
+#			# you can access the accelerations and velocitys for the head and controllers
+#			# that are predicted by the Oculus VrApi via these funcitons:
+#			var controller_id = $LeftTouchController.controller_id;
+#			print(" ovr_utilities.get_controller_linear_velocity(controller_id) == " + str(ovr_utilities.get_controller_linear_velocity(controller_id)));
+#			print(" ovr_utilities.get_controller_linear_acceleration(controller_id) == " + str(ovr_utilities.get_controller_linear_acceleration(controller_id)));
+#			print(" ovr_utilities.get_controller_angular_velocity(controller_id) == " + str(ovr_utilities.get_controller_angular_velocity(controller_id)));
+#			print(" ovr_utilities.get_controller_angular_acceleration(controller_id) == " + str(ovr_utilities.get_controller_angular_acceleration(controller_id)));
+#
+#	if (button == CONTROLLER_BUTTON.XA):
+#		ARVRServer.center_on_hmd(true, true)
+#		_start_controller_vibration($LeftTouchController, 40, 0.5)
 
 func _on_RightTouchController_button_pressed(button):
-	
-	if (button == CONTROLLER_BUTTON.YB):
-		if (ovr_utilities):
-			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
-			# use this for fade to black for example: here we just do a color change
-			ovr_utilities.set_default_layer_color_scale(Color(0.5, 0.0, 1.0, 1.0));
-
-	if (button == CONTROLLER_BUTTON.XA):
-		_start_controller_vibration($RightTouchController, 40, 0.5)
+	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
+	Input.action_press(action)	
+#	if (button == CONTROLLER_BUTTON.YB):
+#		if (ovr_utilities):
+#			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
+#			# use this for fade to black for example: here we just do a color change
+#			ovr_utilities.set_default_layer_color_scale(Color(0.5, 0.0, 1.0, 1.0));
+#
+#	if (button == CONTROLLER_BUTTON.XA):
+#		_start_controller_vibration($RightTouchController, 40, 0.5)
 
 
 func _on_RightTouchController_button_release(button):
-	if (button != CONTROLLER_BUTTON.YB): return;
-
-	if (ovr_utilities):
-		# reset the color to neutral again
-		ovr_utilities.set_default_layer_color_scale(Color(1.0, 1.0, 1.0, 1.0));
+	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
+	Input.action_release(action)	
+#	if (button != CONTROLLER_BUTTON.YB): return;
+#
+#	if (ovr_utilities):
+#		# reset the color to neutral again
+#		ovr_utilities.set_default_layer_color_scale(Color(1.0, 1.0, 1.0, 1.0));
 
 
 
 func _on_LeftTouchController_button_release(button):
-	pass # Replace with function body.
+	Input.action_release("VR_LEFT_"+CONTROLLER_BUTTON.keys()[button])

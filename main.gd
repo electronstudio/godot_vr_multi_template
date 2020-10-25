@@ -8,12 +8,12 @@ func _ready():
 	pass
 
 
-func _process(_delta):
-	if Input.is_action_just_pressed("fire"):
-		print("adding bullet")
-		var bullet = Bullet.instance()
-		bullet.translation = $ARVROrigin/ARVRCamera.get_global_transform().origin
-		bullet.rotation = $ARVROrigin/ARVRCamera.rotation
-		$objects.add_child(bullet)
-		print($objects.get_child_count())
-		
+#func _process(_delta):
+#	if Input.is_action_just_pressed("fire"):
+#		print("adding bullet")
+#		var bullet = Bullet.instance()
+#		bullet.translation = $ARVROrigin/ARVRCamera.get_global_transform().origin
+#		bullet.rotation = $ARVROrigin/ARVRCamera.rotation
+#		get_tree().root.add_child(bullet)
+#
+#
