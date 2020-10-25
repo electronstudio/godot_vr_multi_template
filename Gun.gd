@@ -5,7 +5,7 @@ extends Spatial
 # var a = 2
 # var b = "text"
 export var Bullet = preload("res://Bullet.tscn")
-export var actions = ["VR_LEFT_INDEX_TRIGGER", "fire"]
+export var actions = ["VR_LEFT_INDEX_TRIGGER", "fire", "VR_SCREEN_TAP"]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -61,6 +61,11 @@ func _ready():
 func _input(event):
 	if event is InputEventMouseMotion:
 		_mouse_offset = event.relative
+	if event is InputEventScreenTouch and event.get_index()==0:
+		if event.is_pressed():
+			Input.action_press("VR_SCREEN_TAP")
+		else:
+			Input.action_release("VR_SCREEN_TAP")
 		
 
 func _process(delta_t):
@@ -143,12 +148,12 @@ func _initialize_native_mobile_arvr_interface():
 	var arvr_interface = ARVRServer.find_interface("Native mobile")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
-#		arvr_interface.display_to_lens = 5.463120713829994
-#		#arvr_interface.display_width = 14.5
-#		arvr_interface.iod = 6.1512745916843414
-#		arvr_interface.k1 = 0.40400490164756775
-#		arvr_interface.k2 = 0.4847533404827118
-#		arvr_interface.oversample = 1.5
+		arvr_interface.display_to_lens = 5.463120713829994
+		arvr_interface.display_width = 13
+		arvr_interface.iod = 6.1512745916843414
+		arvr_interface.k1 = 0.0404 # 0.40400490164756775
+		arvr_interface.k2 = 0.0484715 # 0.4847533404827118
+		arvr_interface.oversample = 2.0
 		print("success")
 		return true
 	print("fail to init")
