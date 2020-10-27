@@ -51,7 +51,7 @@ func _ready():
 				var nm = _initialize_native_mobile_arvr_interface()
 				fix_hand_position = true
 			else:
-				self.transform.origin.y = 1.85
+				$ARVRCamera.transform.origin.y = 1.85
 				fix_hand_position = true
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				
