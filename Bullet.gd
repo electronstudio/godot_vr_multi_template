@@ -18,3 +18,9 @@ func _process(delta):
 
 func _on_Timer_timeout():
 	queue_free()
+
+
+func _on_Bullet_area_entered(area):
+	print(area)
+	if area.has_method("bullet_hit"):
+		area.bullet_hit(10)

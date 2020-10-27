@@ -66,6 +66,8 @@ func _input(event):
 			Input.action_press("VR_SCREEN_TAP")
 		else:
 			Input.action_release("VR_SCREEN_TAP")
+	if event is InputEventMouseButton:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
 
 func _process(delta_t):
@@ -377,7 +379,8 @@ func _on_LeftTouchController_button_pressed(button):
 	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_press(action)
 	
-#	if (button == CONTROLLER_BUTTON.YB):
+	if (button == CONTROLLER_BUTTON.YB):
+		ARVRServer.center_on_hmd(true, true)
 #		# examples on using the ovr api from gdscript
 #		if (ovr_guardian_system):
 #			print(" ovr_guardian_system.get_boundary_visible() == " + str(ovr_guardian_system.get_boundary_visible()));
