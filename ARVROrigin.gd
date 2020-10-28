@@ -418,6 +418,7 @@ func _on_LeftTouchController_button_pressed(button):
 func _on_RightTouchController_button_pressed(button):
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_press(action)	
+	_start_controller_vibration($RightTouchController, 200, 1)
 #	if (button == CONTROLLER_BUTTON.YB):
 #		if (ovr_utilities):
 #			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
@@ -431,6 +432,7 @@ func _on_RightTouchController_button_pressed(button):
 func _on_RightTouchController_button_release(button):
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_release(action)	
+	_start_controller_vibration($RightTouchController, 200, 1)
 #	if (button != CONTROLLER_BUTTON.YB): return;
 #
 #	if (ovr_utilities):

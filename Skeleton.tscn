@@ -1,6 +1,8 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
+[ext_resource path="res://sounds/zombie-4.wav" type="AudioStream" id=1]
 [ext_resource path="res://Skeleton.gd" type="Script" id=2]
+[ext_resource path="res://sounds/zombie-21.wav" type="AudioStream" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 resource_name = "Skeleton"
@@ -589,4 +591,13 @@ anims/Skeleton_Spawn = SubResource( 8 )
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( -0.00229504, 0.999595, 0.0283699, -0.080601, -0.0284625, 0.99634, 0.996744, 0, 0.0806337, 0, 2.49029, 0 )
 shape = SubResource( 9 )
+
+[node name="deathSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 1 )
+unit_db = 37.849
+
+[node name="spawnSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 3 )
+unit_db = 24.946
+[connection signal="area_entered" from="." to="." method="_on_Skeleton_area_entered"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

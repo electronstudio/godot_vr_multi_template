@@ -22,4 +22,4 @@ func _on_Timer_timeout():
 	var skeleton = Skeleton.instance()
 	skeleton.transform = transform
 	add_child(skeleton)
-	$Timer.wait_time = rand_range(5,20)
+	$Timer.wait_time = rand_range(5,25)

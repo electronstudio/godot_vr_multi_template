@@ -15,6 +15,7 @@ func _ready():
 func _process(_delta):
 	for action in actions:
 		if Input.is_action_just_pressed(action):
+			$AudioStreamPlayer3D.play()
 			var bullet = Bullet.instance()
 			bullet.transform = self.get_global_transform()
 			get_tree().root.add_child(bullet)

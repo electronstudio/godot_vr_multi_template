@@ -7,8 +7,11 @@ extends Area
 
 var target = Vector3(0,0,0)
 
+var dead = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$spawnSound.play()
 	$AnimationPlayer.play("Skeleton_Spawn")
 
 
@@ -29,4 +32,13 @@ func _on_AnimationPlayer_animation_finished(anim_name):
 		queue_free()
 		
 func bullet_hit(damage):
-	$AnimationPlayer.play("Skeleton_Death")
+	if not dead:
+		dead = true
+		$deathSound.play()
+		$AnimationPlayer.play("Skeleton_Death")
+		get_tree().current_scene.score += 1
+
+
+func _on_Skeleton_area_entered(area):
+	if area.has_method("enemy_hit"):
+		area.enemy_hit(10)

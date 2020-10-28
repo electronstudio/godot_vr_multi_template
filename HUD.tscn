@@ -1,16 +1,8 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
 
-[node name="2dscene" type="Node2D"]
+[ext_resource path="res://interface/fonts/kenvector_future_32.tres" type="DynamicFont" id=1]
 
-[node name="Label" type="Label" parent="."]
-margin_left = 437.805
-margin_top = 11.7855
-margin_right = 520.805
-margin_bottom = 25.7855
-text = "RAR RAR RAR"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="HUD" type="Node2D"]
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = 956.0
@@ -45,6 +37,29 @@ margin_top = 1056.0
 margin_right = 1920.0
 margin_bottom = 1080.0
 color = Color( 0, 0.0509804, 0.811765, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 791.177
+margin_top = -7.34062
+margin_right = 972.177
+margin_bottom = 67.6594
+custom_fonts/font = ExtResource( 1 )
+text = "SCORE:
+"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="score" type="Label" parent="."]
+margin_left = 977.855
+margin_top = -7.34061
+margin_right = 1158.86
+margin_bottom = 61.6594
+custom_fonts/font = ExtResource( 1 )
+text = "0"
 __meta__ = {
 "_edit_use_anchors_": false
 }
