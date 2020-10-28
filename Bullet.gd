@@ -24,3 +24,4 @@ func _on_Bullet_area_entered(area):
 	print(area)
 	if area.has_method("bullet_hit"):
 		area.bullet_hit(10)
+		queue_free()
