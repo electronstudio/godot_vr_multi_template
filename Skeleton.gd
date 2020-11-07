@@ -42,3 +42,4 @@ func bullet_hit(damage):
 func _on_Skeleton_area_entered(area):
 	if area.has_method("enemy_hit"):
 		area.enemy_hit(10)
+		queue_free()

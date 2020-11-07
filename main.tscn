@@ -8,7 +8,6 @@
 [ext_resource path="res://Gun.tscn" type="PackedScene" id=6]
 [ext_resource path="res://textures/skymaps/night_free_Ref2.jpg" type="Texture" id=7]
 [ext_resource path="res://models/graveyard/ironFenceBorderCurve.glb" type="PackedScene" id=8]
-[ext_resource path="res://Skeleton.tscn" type="PackedScene" id=9]
 [ext_resource path="res://models/blasters/blasterH.glb" type="PackedScene" id=10]
 [ext_resource path="res://Spawner.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Player.gd" type="Script" id=12]
@@ -31,89 +30,103 @@ flags_transparent = true
 flags_unshaded = true
 albedo_texture = SubResource( 3 )
 
-[sub_resource type="CapsuleShape" id=12]
+[sub_resource type="CapsuleShape" id=5]
 radius = 0.567359
 height = 1.71882
 
-[sub_resource type="CubeMesh" id=5]
+[sub_resource type="CylinderMesh" id=6]
+top_radius = 0.01
+bottom_radius = 0.01
+height = 20.0
 
-[sub_resource type="World" id=6]
+[sub_resource type="SpatialMaterial" id=7]
+albedo_color = Color( 1, 0, 0, 1 )
+emission_enabled = true
+emission = Color( 1, 0, 0, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+distance_fade_mode = 1
+distance_fade_min_distance = 5.0
+distance_fade_max_distance = 0.0
 
-[sub_resource type="PlaneMesh" id=7]
+[sub_resource type="World" id=10]
+
+[sub_resource type="PlaneMesh" id=11]
 size = Vector2( 100, 100 )
 
-[sub_resource type="SpatialMaterial" id=8]
+[sub_resource type="SpatialMaterial" id=12]
 albedo_color = Color( 0, 0.203922, 0.0156863, 1 )
 
-[sub_resource type="ConcavePolygonShape" id=9]
+[sub_resource type="ConcavePolygonShape" id=13]
 data = PoolVector3Array( 50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0, -50, 50, 0, -50 )
 
-[sub_resource type="PanoramaSky" id=10]
+[sub_resource type="PanoramaSky" id=14]
 panorama = ExtResource( 7 )
 
-[sub_resource type="Environment" id=11]
+[sub_resource type="Environment" id=15]
 background_mode = 2
-background_sky = SubResource( 10 )
+background_sky = SubResource( 14 )
 background_color = Color( 0.00392157, 0.411765, 0.505882, 1 )
 
-[node name="main" type="Spatial"]
+[node name="Main" type="Spatial"]
 script = ExtResource( 5 )
 
-[node name="ARVROrigin" type="ARVROrigin" parent="."]
+[node name="VR" type="ARVROrigin" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.173223, 2, 0 )
 script = ExtResource( 1 )
 mobile_test = false
 
-[node name="ARVRCamera" type="ARVRCamera" parent="ARVROrigin"]
+[node name="Headset" type="ARVRCamera" parent="VR"]
 near = 0.01
 
-[node name="MeshInstance2" type="MeshInstance" parent="ARVROrigin/ARVRCamera"]
+[node name="HUD" type="MeshInstance" parent="VR/Headset"]
 transform = Transform( 0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.001, 0, 0, -0.77 )
 mesh = SubResource( 2 )
 material/0 = SubResource( 4 )
 
-[node name="Player" type="Area" parent="ARVROrigin/ARVRCamera"]
+[node name="Player" type="Area" parent="VR/Headset"]
 script = ExtResource( 12 )
 
-[node name="CollisionShape" type="CollisionShape" parent="ARVROrigin/ARVRCamera/Player"]
+[node name="CollisionShape" type="CollisionShape" parent="VR/Headset/Player"]
 transform = Transform( -1.62921e-07, 1, -1.62921e-07, 0, -1.62921e-07, -1, -1, -1.62921e-07, 2.65431e-14, 0, -0.79615, 0 )
-shape = SubResource( 12 )
+shape = SubResource( 5 )
 
-[node name="LeftTouchController" type="ARVRController" parent="ARVROrigin"]
+[node name="LeftController" type="ARVRController" parent="VR"]
 
-[node name="left_hand_model" parent="ARVROrigin/LeftTouchController" instance=ExtResource( 3 )]
+[node name="LeftHandModel" parent="VR/LeftController" instance=ExtResource( 3 )]
 transform = Transform( -1.62921e-07, -3.25841e-07, -1, 0, -1, 3.25841e-07, -1, 5.30863e-14, 1.62921e-07, 0, 0, 0.07 )
 
-[node name="Gun" parent="ARVROrigin/LeftTouchController/left_hand_model" instance=ExtResource( 6 )]
+[node name="Gun" parent="VR/LeftController/LeftHandModel" instance=ExtResource( 6 )]
 transform = Transform( -1.62921e-07, 4.06576e-20, -1, -3.25841e-07, -1, 5.30863e-14, -1, 3.25841e-07, 1.62921e-07, 0.07, 0, -1.49012e-08 )
 
-[node name="blasterI" parent="ARVROrigin/LeftTouchController/left_hand_model/Gun" instance=ExtResource( 13 )]
+[node name="BlasterModel" parent="VR/LeftController/LeftHandModel/Gun" instance=ExtResource( 13 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0 )
 
-[node name="RightTouchController" type="ARVRController" parent="ARVROrigin"]
+[node name="LaserPointer" type="MeshInstance" parent="VR/LeftController/LeftHandModel/Gun"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, -10 )
+mesh = SubResource( 6 )
+material/0 = SubResource( 7 )
+
+[node name="RightController" type="ARVRController" parent="VR"]
 controller_id = 2
 
-[node name="right_hand_model" parent="ARVROrigin/RightTouchController" instance=ExtResource( 4 )]
+[node name="RightHandModel" parent="VR/RightController" instance=ExtResource( 4 )]
 transform = Transform( 1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 0, 0, 0.07 )
 
-[node name="Gun" parent="ARVROrigin/RightTouchController/right_hand_model" instance=ExtResource( 6 )]
+[node name="Gun" parent="VR/RightController/RightHandModel" instance=ExtResource( 6 )]
 transform = Transform( 1.19249e-08, 0, 1, 0, 1, 0, -1, 0, 1.19249e-08, -0.07, 0, 0 )
 actions = [ "VR_RIGHT_INDEX_TRIGGER", "fire", "VR_SCREEN_TAP" ]
 
-[node name="blasterH" parent="ARVROrigin/RightTouchController/right_hand_model/Gun" instance=ExtResource( 10 )]
+[node name="BlasterModel" parent="VR/RightController/RightHandModel/Gun" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0 )
-
-[node name="test_cube" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.70042, 1.00127, 0 )
-mesh = SubResource( 5 )
-material/0 = null
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( -0.397104, -0.668733, 0.628573, -0.0842258, 0.708553, 0.700613, -0.913901, 0.225274, -0.337694, 0, 11.8619, 0 )
 
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 1920, 1080 )
-world = SubResource( 6 )
+world = SubResource( 10 )
 transparent_bg = true
 usage = 0
 render_target_v_flip = true
@@ -126,453 +139,448 @@ follow_viewport_enable = true
 [node name="HUD" parent="CanvasLayer" instance=ExtResource( 2 )]
 visible = false
 
-[node name="ground" type="MeshInstance" parent="."]
+[node name="Ground" type="MeshInstance" parent="."]
 visible = false
-mesh = SubResource( 7 )
-material/0 = SubResource( 8 )
+mesh = SubResource( 11 )
+material/0 = SubResource( 12 )
 
-[node name="StaticBody" type="StaticBody" parent="ground"]
+[node name="StaticBody" type="StaticBody" parent="Ground"]
 
-[node name="CollisionShape" type="CollisionShape" parent="ground/StaticBody"]
-shape = SubResource( 9 )
+[node name="CollisionShape" type="CollisionShape" parent="Ground/StaticBody"]
+shape = SubResource( 13 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 11 )
+environment = SubResource( 15 )
 
-[node name="fence" type="Spatial" parent="."]
+[node name="Fence" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.293411, 0, 37.7412 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="fence4" type="Spatial" parent="fence"]
+[node name="fence4" type="Spatial" parent="Fence"]
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="fence3" type="Spatial" parent="fence/fence4"]
+[node name="fence3" type="Spatial" parent="Fence/fence4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence4/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence4/fence3" instance=ExtResource( 25 )]
 
-[node name="fence2" type="Spatial" parent="fence/fence4"]
+[node name="fence2" type="Spatial" parent="Fence/fence4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence4/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence4/fence2" instance=ExtResource( 25 )]
 
-[node name="fence" type="Spatial" parent="fence/fence4"]
+[node name="fence" type="Spatial" parent="Fence/fence4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence4/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence4/fence" instance=ExtResource( 25 )]
 
-[node name="ironFenceBorderCurve" parent="fence/fence4/fence" instance=ExtResource( 8 )]
+[node name="ironFenceBorderCurve" parent="Fence/fence4/fence" instance=ExtResource( 8 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 63, 0, 0 )
 
-[node name="fence5" type="Spatial" parent="fence"]
+[node name="fence5" type="Spatial" parent="Fence"]
 transform = Transform( -1.62921e-07, 0, 1, 0, 1, 0, -1, 0, -1.62921e-07, 35.9084, 0, -33.2015 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="fence3" type="Spatial" parent="fence/fence5"]
+[node name="fence3" type="Spatial" parent="Fence/fence5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence5/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence5/fence3" instance=ExtResource( 25 )]
 
-[node name="fence2" type="Spatial" parent="fence/fence5"]
+[node name="fence2" type="Spatial" parent="Fence/fence5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence5/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence5/fence2" instance=ExtResource( 25 )]
 
-[node name="fence" type="Spatial" parent="fence/fence5"]
+[node name="fence" type="Spatial" parent="Fence/fence5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence5/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence5/fence" instance=ExtResource( 25 )]
 
-[node name="ironFenceBorderCurve" parent="fence/fence5/fence" instance=ExtResource( 8 )]
+[node name="ironFenceBorderCurve" parent="Fence/fence5/fence" instance=ExtResource( 8 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 63, 0, 0 )
 
-[node name="fence6" type="Spatial" parent="fence"]
+[node name="fence6" type="Spatial" parent="Fence"]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 2.69881, 0, -69.1101 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="fence3" type="Spatial" parent="fence/fence6"]
+[node name="fence3" type="Spatial" parent="Fence/fence6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence6/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence6/fence3" instance=ExtResource( 25 )]
 
-[node name="fence2" type="Spatial" parent="fence/fence6"]
+[node name="fence2" type="Spatial" parent="Fence/fence6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence6/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence6/fence2" instance=ExtResource( 25 )]
 
-[node name="fence" type="Spatial" parent="fence/fence6"]
+[node name="fence" type="Spatial" parent="Fence/fence6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence6/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence6/fence" instance=ExtResource( 25 )]
 
-[node name="ironFenceBorderCurve" parent="fence/fence6/fence" instance=ExtResource( 8 )]
+[node name="ironFenceBorderCurve" parent="Fence/fence6/fence" instance=ExtResource( 8 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 63, 0, 0 )
 
-[node name="fence7" type="Spatial" parent="fence"]
+[node name="fence7" type="Spatial" parent="Fence"]
 transform = Transform( 1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -33.2106, 0, -35.8974 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="fence3" type="Spatial" parent="fence/fence7"]
+[node name="fence3" type="Spatial" parent="Fence/fence7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence7/fence3" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence7/fence3" instance=ExtResource( 25 )]
 
-[node name="fence2" type="Spatial" parent="fence/fence7"]
+[node name="fence2" type="Spatial" parent="Fence/fence7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence7/fence2" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence7/fence2" instance=ExtResource( 25 )]
 
-[node name="fence" type="Spatial" parent="fence/fence7"]
+[node name="fence" type="Spatial" parent="Fence/fence7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ironFenceBorder" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 12, 0, 0 )
 
-[node name="ironFenceBorder6" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder6" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder5" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder5" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 9, 0, 0 )
 
-[node name="ironFenceBorder4" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder4" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, 0 )
 
-[node name="ironFenceBorder3" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder3" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0 )
 
-[node name="ironFenceBorder2" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder2" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -9, 0, 0 )
 
-[node name="ironFenceBorder9" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder9" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, 0 )
 
-[node name="ironFenceBorder8" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder8" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, 0 )
 
-[node name="ironFenceBorder7" parent="fence/fence7/fence" instance=ExtResource( 25 )]
+[node name="ironFenceBorder7" parent="Fence/fence7/fence" instance=ExtResource( 25 )]
 
-[node name="ironFenceBorderCurve" parent="fence/fence7/fence" instance=ExtResource( 8 )]
+[node name="ironFenceBorderCurve" parent="Fence/fence7/fence" instance=ExtResource( 8 )]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 63, 0, 0 )
 
-[node name="graveyard" type="Spatial" parent="."]
+[node name="Graveyard" type="Spatial" parent="."]
 
-[node name="rocksTall" parent="graveyard" instance=ExtResource( 16 )]
+[node name="rocksTall" parent="Graveyard" instance=ExtResource( 16 )]
 transform = Transform( 6, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0 )
-
-[node name="enemy" type="Spatial" parent="."]
-
-[node name="Skeleton" parent="enemy" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5496, 0, -26.2027 )
 
 [node name="Spawner" parent="." instance=ExtResource( 11 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -42.852 )
@@ -603,7 +611,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4197, 0, -33.9617 )
 
 [node name="Spawner10" parent="." instance=ExtResource( 11 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40.8116 )
-[connection signal="button_pressed" from="ARVROrigin/LeftTouchController" to="ARVROrigin" method="_on_LeftTouchController_button_pressed"]
-[connection signal="button_release" from="ARVROrigin/LeftTouchController" to="ARVROrigin" method="_on_LeftTouchController_button_release"]
-[connection signal="button_pressed" from="ARVROrigin/RightTouchController" to="ARVROrigin" method="_on_RightTouchController_button_pressed"]
-[connection signal="button_release" from="ARVROrigin/RightTouchController" to="ARVROrigin" method="_on_RightTouchController_button_release"]
+[connection signal="button_pressed" from="VR/LeftController" to="VR" method="_on_LeftTouchController_button_pressed"]
+[connection signal="button_release" from="VR/LeftController" to="VR" method="_on_LeftTouchController_button_release"]
+[connection signal="button_pressed" from="VR/RightController" to="VR" method="_on_RightTouchController_button_pressed"]
+[connection signal="button_release" from="VR/RightController" to="VR" method="_on_RightTouchController_button_release"]

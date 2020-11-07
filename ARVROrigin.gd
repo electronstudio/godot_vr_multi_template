@@ -51,7 +51,7 @@ func _ready():
 				var nm = _initialize_native_mobile_arvr_interface()
 				fix_hand_position = true
 			else:
-				$ARVRCamera.transform.origin.y = 1.85
+				$Headset.transform.origin.y = 1.85
 				fix_hand_position = true
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				
@@ -96,23 +96,23 @@ func _process_mouse_rotation():
 	_total_yaw += _yaw
 	_total_pitch += _pitch
 	
-	$ARVRCamera.rotate_y(deg2rad(-_yaw))
-	$ARVRCamera.rotate_object_local(Vector3(1,0,0), deg2rad(-_pitch))
+	$Headset.rotate_y(deg2rad(-_yaw))
+	$Headset.rotate_object_local(Vector3(1,0,0), deg2rad(-_pitch))
 	
-	$LeftTouchController.transform = $ARVRCamera.transform
-	$LeftTouchController.translate(Vector3(-0.2,-0.1,-0.2))
-	#$LeftTouchController.rotation = $ARVRCamera.rotation
-	#$LeftTouchController.translation = Vector3(-0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftTouchController.rotation.x).rotated(Vector3.UP, $LeftTouchController.rotation.y)
+	$LeftController.transform = $Headset.transform
+	$LeftController.translate(Vector3(-0.2,-0.1,-0.2))
+	#$LeftController.rotation = $Headset.rotation
+	#$LeftController.translation = Vector3(-0.2,-0.1,-0.2).rotated(Vector3.RIGHT, $LeftController.rotation.x).rotated(Vector3.UP, $LeftController.rotation.y)
 	
-	$RightTouchController.transform = $ARVRCamera.transform
-	$RightTouchController.translate(Vector3(0.2,-0.1,-0.2))
+	$RightController.transform = $Headset.transform
+	$RightController.translate(Vector3(0.2,-0.1,-0.2))
 	
 
 
 func _process_6dof_joystick_turns():
 	var offset = Vector2(0,0)
-	if $RightTouchController.get_is_active():
-		var x = $RightTouchController.get_joystick_axis(0)
+	if $RightController.get_is_active():
+		var x = $RightController.get_joystick_axis(0)
 		if quick_turn_degrees==0:
 			offset.x = x
 		else:
@@ -133,9 +133,9 @@ func _process_6dof_joystick_turns():
 		_yaw = clamp(_yaw, -yaw_limit - _total_yaw, yaw_limit - _total_yaw)
 	_total_yaw += _yaw
 	
-	self.translate($ARVRCamera.translation)
+	self.translate($Headset.translation)
 	self.rotate_y(deg2rad(-_yaw))	
-	self.translate(-$ARVRCamera.translation)
+	self.translate(-$Headset.translation)
 	
 
 func _process_keys():
@@ -172,10 +172,10 @@ func _initialize_openvr_arvr_interface():
 			OS.vsync_enabled = false
 			Engine.target_fps = 90	
 			Engine.iterations_per_second = 90
-			$LeftTouchController/left_hand_model.translation = Vector3(0,0,0.2)
-			$LeftTouchController/left_hand_model.rotation_degrees = Vector3(0,-90,220)
-			$RightTouchController/right_hand_model.translation = Vector3(0,0,0.2)
-			$RightTouchController/right_hand_model.rotation_degrees = Vector3(0,-90,40)
+			$LeftController/left_hand_model.translation = Vector3(0,0,0.2)
+			$LeftController/left_hand_model.rotation_degrees = Vector3(0,-90,220)
+			$RightController/right_hand_model.translation = Vector3(0,0,0.2)
+			$RightController/right_hand_model.rotation_degrees = Vector3(0,-90,40)
 			return true
 		else:
 			print("Couldn't initialize OpenVR")
@@ -282,17 +282,17 @@ func _check_and_perform_runtime_config():
 func _check_move(delta_t):
 	var dx=0
 	var dy=0
-	if $LeftTouchController.get_is_active():
-		dx = $LeftTouchController.get_joystick_axis(0)
-		dy = $LeftTouchController.get_joystick_axis(1)
+	if $LeftController.get_is_active():
+		dx = $LeftController.get_joystick_axis(0)
+		dy = $LeftController.get_joystick_axis(1)
 	else:
 		dx = - Input.get_action_strength("strafe_left") + Input.get_action_strength("strafe_right");
 		dy = Input.get_action_strength("walk_forwards") - Input.get_action_strength("walk_backwards");
 	var dead_zone = 0.125;
 	
 	if (dx*dx + dy*dy > dead_zone*dead_zone):
-		var view_dir = -$ARVRCamera.transform.basis.z;
-		var strafe_dir = $ARVRCamera.transform.basis.x;
+		var view_dir = -$Headset.transform.basis.z;
+		var strafe_dir = $Headset.transform.basis.x;
 
 		view_dir.y = 0.0;
 		strafe_dir.y = 0.0;
@@ -337,8 +337,8 @@ func _check_worldscale():
 		was_world_scale = world_scale
 		var inv_world_scale = 1.0 / was_world_scale
 		var controller_scale = Vector3(inv_world_scale, inv_world_scale, inv_world_scale)
-		$"LeftTouchController/left-controller".scale = controller_scale
-		$"RightTouchController/right-controller".scale = -controller_scale
+		$"LeftController/left-controller".scale = controller_scale
+		$"RightController/right-controller".scale = -controller_scale
 
 
 
@@ -374,7 +374,9 @@ enum CONTROLLER_BUTTON {
 
 
 # this is a function connected to the button release signal from the controller
-func _on_LeftTouchController_button_pressed(button):
+func _on_LeftController_button_pressed(button):
+	
+	_start_controller_vibration($LeftController, 100, 1)
 	
 	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_press(action)
@@ -405,7 +407,7 @@ func _on_LeftTouchController_button_pressed(button):
 #
 #			# you can access the accelerations and velocitys for the head and controllers
 #			# that are predicted by the Oculus VrApi via these funcitons:
-#			var controller_id = $LeftTouchController.controller_id;
+#			var controller_id = $LeftController.controller_id;
 #			print(" ovr_utilities.get_controller_linear_velocity(controller_id) == " + str(ovr_utilities.get_controller_linear_velocity(controller_id)));
 #			print(" ovr_utilities.get_controller_linear_acceleration(controller_id) == " + str(ovr_utilities.get_controller_linear_acceleration(controller_id)));
 #			print(" ovr_utilities.get_controller_angular_velocity(controller_id) == " + str(ovr_utilities.get_controller_angular_velocity(controller_id)));
@@ -413,12 +415,13 @@ func _on_LeftTouchController_button_pressed(button):
 #
 #	if (button == CONTROLLER_BUTTON.XA):
 #		ARVRServer.center_on_hmd(true, true)
-#		_start_controller_vibration($LeftTouchController, 40, 0.5)
+#		_start_controller_vibration($LeftController, 40, 0.5)
 
-func _on_RightTouchController_button_pressed(button):
+func _on_RightController_button_pressed(button):
+	_start_controller_vibration($RightController, 100, 1)
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_press(action)	
-	_start_controller_vibration($RightTouchController, 200, 1)
+
 #	if (button == CONTROLLER_BUTTON.YB):
 #		if (ovr_utilities):
 #			print("Primary controller id: " + str(ovr_input.get_primary_controller_id()))
@@ -426,13 +429,12 @@ func _on_RightTouchController_button_pressed(button):
 #			ovr_utilities.set_default_layer_color_scale(Color(0.5, 0.0, 1.0, 1.0));
 #
 #	if (button == CONTROLLER_BUTTON.XA):
-#		_start_controller_vibration($RightTouchController, 40, 0.5)
+#		_start_controller_vibration($RightController, 40, 0.5)
 
 
-func _on_RightTouchController_button_release(button):
+func _on_RightController_button_release(button):
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_release(action)	
-	_start_controller_vibration($RightTouchController, 200, 1)
 #	if (button != CONTROLLER_BUTTON.YB): return;
 #
 #	if (ovr_utilities):
@@ -441,5 +443,5 @@ func _on_RightTouchController_button_release(button):
 
 
 
-func _on_LeftTouchController_button_release(button):
+func _on_LeftController_button_release(button):
 	Input.action_release("VR_LEFT_"+CONTROLLER_BUTTON.keys()[button])
