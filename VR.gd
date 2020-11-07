@@ -17,7 +17,7 @@ var was_world_scale = 1.0
 
 var fix_hand_position = false
 
-export var mobile_test = true
+export var mobile_test = false
 
 
 var _mouse_offset = Vector2()
