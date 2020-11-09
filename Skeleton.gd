@@ -1,6 +1,6 @@
 extends Area
 
-onready var target = get_tree().root.find_node("Player", true, true)
+onready var target = get_tree().root.find_node("Player", true, false)
 
 var dead = false
 

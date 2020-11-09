@@ -43,6 +43,7 @@ var _joy_centered=true
 
 
 func _ready():
+	setup_HUD()
 	var ovr = _initialize_ovr_mobile_arvr_interface()
 	if not ovr:
 		var openvr = _initialize_openvr_arvr_interface()
@@ -56,7 +57,8 @@ func _ready():
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				
 
-
+func setup_HUD():
+	$Headset/HUD.get_surface_material(0).get_texture(0).set_viewport_path_in_scene(str(self.get_path())+"/Headset/HUD/Viewport")
 
 func _input(event):
 	if event is InputEventMouseMotion:

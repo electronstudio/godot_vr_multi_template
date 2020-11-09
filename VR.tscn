@@ -30,7 +30,6 @@ near = 0.01
 
 [node name="HUD" type="MeshInstance" parent="Headset"]
 transform = Transform( 0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.001, 0, 0, -0.77 )
-visible = false
 mesh = SubResource( 2 )
 material/0 = SubResource( 4 )
 
