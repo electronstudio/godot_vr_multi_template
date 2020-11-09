@@ -11,6 +11,6 @@ func _process(_delta):
 			$AudioStreamPlayer3D.play()
 			var bullet = Bullet.instance()
 			bullet.transform = self.get_global_transform()
-			get_tree().root.add_child(bullet)
+			get_tree().current_scene.add_child(bullet)
 		
 		

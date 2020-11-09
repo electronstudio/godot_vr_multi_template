@@ -11,5 +11,5 @@ dest_files=[ "res://.import/zapThreeToneDown.ogg-bf38ca5d057b91405784024723f842f
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

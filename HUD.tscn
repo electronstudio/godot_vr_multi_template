@@ -33,6 +33,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="red_filter" type="ColorRect" parent="."]
+visible = false
+margin_left = -190.0
+margin_top = -181.0
+margin_right = 2114.0
+margin_bottom = 1265.0
+color = Color( 1, 0.0627451, 0.0156863, 0.670588 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="ColorRect6" type="ColorRect" parent="."]
 margin_top = 1056.0
 margin_right = 1920.0
