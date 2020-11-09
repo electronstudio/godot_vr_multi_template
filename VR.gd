@@ -381,8 +381,16 @@ func _on_LeftController_button_pressed(button):
 	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
 	Input.action_press(action)
 	
-	if (button == CONTROLLER_BUTTON.YB):
-		ARVRServer.center_on_hmd(true, true)
+	var ia = InputEventJoypadButton.new()
+	ia.button_index=0
+	ia.pressed=1
+	ia.pressure=1
+	
+	get_tree().root.input(ia)
+	
+	
+	#if (button == CONTROLLER_BUTTON.YB):
+	#	ARVRServer.center_on_hmd(true, true)
 #		# examples on using the ovr api from gdscript
 #		if (ovr_guardian_system):
 #			print(" ovr_guardian_system.get_boundary_visible() == " + str(ovr_guardian_system.get_boundary_visible()));

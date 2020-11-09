@@ -512,7 +512,7 @@ height = 3.97413
 script = ExtResource( 2 )
 
 [node name="SkeletonArmature" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0135427, 1.35451, 0.00185889 )
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0.0135427, 1.35451, 0.00185889 )
 
 [node name="Skeleton" type="Skeleton" parent="SkeletonArmature"]
 bones/0/name = "hips"

@@ -18,8 +18,8 @@ func _ready():
 
 
 func _on_Timer_timeout():
-	print("spawn")
 	var skeleton = Skeleton.instance()
 	skeleton.transform = transform
+	print("spawn ", skeleton.target)
 	add_child(skeleton)
 	$Timer.wait_time = rand_range(5,25)

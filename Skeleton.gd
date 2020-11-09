@@ -1,26 +1,19 @@
 extends Area
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-var target = Vector3(0,0,0)
+onready var target = get_tree().root.find_node("Player", true, true)
 
 var dead = false
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	$spawnSound.play()
 	$AnimationPlayer.play("Skeleton_Spawn")
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if $AnimationPlayer.current_animation=="Skeleton_Running":
-		look_at(target, Vector3.UP)
-		rotate_y(PI)
-		translate_object_local(Vector3(0,0,delta*5))
+		look_at(target.global_transform.origin, Vector3.UP)
+		rotation_degrees.x = 0
+		translate(Vector3(0,0,delta*-5.0))
+
 
 
 func _on_AnimationPlayer_animation_finished(anim_name):
