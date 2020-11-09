@@ -1,19 +1,32 @@
 extends Area
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+var score = 0
+var health = 100
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	Globals.connect("score_points", self, "_score_points")
+	
+func _score_points(points):
+	score += points
+
+func _process(_delta):
+	get_node("../HUD/Viewport/HUD/score").text = str(score)
+	get_node("../HUD/Viewport/HUD/health").text = str(health)
 
 
 func enemy_hit(damage):
 	print("player died")
-	get_tree().current_scene.score = 0
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	health -= damage
+	if health <= 0:
+		gameover()
+	
+func gameover():
+	get_node("../HUD/Viewport/HUD/GameOver").visible = true
+	get_node("/root/Main/WorldEnvironment").environment.adjustment_enabled = true
+	get_node("/root/Main/WorldEnvironment").environment.adjustment_saturation = 0.0
+	get_tree().paused = true
+	yield(get_tree().create_timer(5.0), "timeout")
+	get_tree().paused = false
+	get_tree().change_scene("res://TitleScreen.tscn")
+

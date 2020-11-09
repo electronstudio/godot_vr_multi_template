@@ -25,7 +25,8 @@ __meta__ = {
 }
 
 [node name="ColorRect4" type="ColorRect" parent="."]
-margin_right = 1920.0
+margin_left = -0.840942
+margin_right = 1919.16
 margin_bottom = 24.0
 color = Color( 0, 0.0509804, 0.811765, 1 )
 __meta__ = {
@@ -42,22 +43,57 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="."]
-margin_left = 791.177
-margin_top = -7.34062
-margin_right = 972.177
-margin_bottom = 67.6594
+margin_left = 613.748
+margin_top = -6.49972
+margin_right = 794.748
+margin_bottom = 68.5003
 custom_fonts/font = ExtResource( 1 )
-text = "SCORE:
+text = "SCORE"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameOver" type="Label" parent="."]
+visible = false
+margin_left = 741.564
+margin_top = 245.769
+margin_right = 973.564
+margin_bottom = 320.769
+rect_scale = Vector2( 2, 2 )
+custom_fonts/font = ExtResource( 1 )
+text = "GAME OVER"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 1249.46
+margin_top = -6.49972
+margin_right = 1430.46
+margin_bottom = 68.5003
+custom_fonts/font = ExtResource( 1 )
+text = "HEALTH
 "
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="score" type="Label" parent="."]
-margin_left = 977.855
-margin_top = -7.34061
-margin_right = 1158.86
-margin_bottom = 61.6594
+margin_left = 775.2
+margin_top = -6.49973
+margin_right = 956.205
+margin_bottom = 62.5003
+custom_fonts/font = ExtResource( 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="health" type="Label" parent="."]
+margin_left = 1153.6
+margin_top = -6.49973
+margin_right = 1334.61
+margin_bottom = 62.5003
 custom_fonts/font = ExtResource( 1 )
 text = "0"
 __meta__ = {

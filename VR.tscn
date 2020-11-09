@@ -22,6 +22,7 @@ albedo_texture = SubResource( 3 )
 [sub_resource type="World" id=5]
 
 [node name="VR" type="ARVROrigin"]
+pause_mode = 2
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.173223, 2, 0 )
 script = ExtResource( 2 )
 

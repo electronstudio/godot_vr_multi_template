@@ -29,7 +29,7 @@ func bullet_hit(damage):
 		dead = true
 		$deathSound.play()
 		$AnimationPlayer.play("Skeleton_Death")
-		get_tree().current_scene.score += 1
+		Globals.emit_signal("score_points", 1)
 
 
 func _on_Skeleton_area_entered(area):
