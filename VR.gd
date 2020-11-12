@@ -378,17 +378,18 @@ enum CONTROLLER_BUTTON {
 # this is a function connected to the button release signal from the controller
 func _on_LeftController_button_pressed(button):
 	
-	_start_controller_vibration($LeftController, 100, 1)
+	# _start_controller_vibration($LeftController, 100, 1)
 	
 	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
+	print("ACTION: "+action)
 	Input.action_press(action)
 	
-	var ia = InputEventJoypadButton.new()
-	ia.button_index=0
-	ia.pressed=1
-	ia.pressure=1
-	
-	get_tree().root.input(ia)
+#	var ia = InputEventJoypadButton.new()
+#	ia.button_index=0
+#	ia.pressed=1
+#	ia.pressure=1
+#
+#	get_tree().root.input(ia)
 	
 	
 	#if (button == CONTROLLER_BUTTON.YB):
@@ -428,8 +429,9 @@ func _on_LeftController_button_pressed(button):
 #		_start_controller_vibration($LeftController, 40, 0.5)
 
 func _on_RightController_button_pressed(button):
-	_start_controller_vibration($RightController, 100, 1)
+	#_start_controller_vibration($RightController, 100, 1)
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
+	#print("ACTION: "+action)
 	Input.action_press(action)	
 
 #	if (button == CONTROLLER_BUTTON.YB):
@@ -455,3 +457,7 @@ func _on_RightController_button_release(button):
 
 func _on_LeftController_button_release(button):
 	Input.action_release("VR_LEFT_"+CONTROLLER_BUTTON.keys()[button])
+
+
+func _on_RightController_mesh_updated(mesh):
+	print("MESH UPDATED "+mesh)

@@ -14,7 +14,6 @@ func _ready():
 #
 
 func _show_wave():
-	
 	var wave = round(1 + pow(score, 0.6) * 0.3)
 	#print("wave "+str(wave))
 	if wave > Globals.wave:

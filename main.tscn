@@ -39,12 +39,12 @@ distance_fade_mode = 1
 distance_fade_min_distance = 5.0
 distance_fade_max_distance = 0.0
 
-[sub_resource type="PanoramaSky" id=9]
+[sub_resource type="PanoramaSky" id=6]
 panorama = ExtResource( 7 )
 
-[sub_resource type="Environment" id=10]
+[sub_resource type="Environment" id=7]
 background_mode = 2
-background_sky = SubResource( 9 )
+background_sky = SubResource( 6 )
 background_color = Color( 0.00392157, 0.411765, 0.505882, 1 )
 fog_color = Color( 0, 0, 0, 1 )
 adjustment_enabled = true
@@ -86,11 +86,16 @@ actions = [ "VR_RIGHT_INDEX_TRIGGER", "fire", "VR_SCREEN_TAP" ]
 [node name="BlasterModel" parent="VR/RightController/RightHandModel/RightGun" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0 )
 
+[node name="LaserPointer2" type="MeshInstance" parent="VR/RightController/RightHandModel/RightGun"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, -10 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
+
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( -0.397104, -0.668733, 0.628573, -0.0842258, 0.708553, 0.700613, -0.913901, 0.225274, -0.337694, 0, 11.8619, 0 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 10 )
+environment = SubResource( 7 )
 
 [node name="Level" parent="." instance=ExtResource( 8 )]
 

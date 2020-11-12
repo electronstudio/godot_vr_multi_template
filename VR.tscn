@@ -51,7 +51,8 @@ controller_id = 2
 
 [node name="RightHandModel" parent="RightController" instance=ExtResource( 4 )]
 transform = Transform( 1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 0, 0, 0.07 )
-[connection signal="button_pressed" from="LeftController" to="." method="_on_LeftTouchController_button_pressed"]
-[connection signal="button_release" from="LeftController" to="." method="_on_LeftTouchController_button_release"]
-[connection signal="button_pressed" from="RightController" to="." method="_on_RightTouchController_button_pressed"]
-[connection signal="button_release" from="RightController" to="." method="_on_RightTouchController_button_release"]
+[connection signal="button_pressed" from="LeftController" to="." method="_on_LeftController_button_pressed"]
+[connection signal="button_release" from="LeftController" to="." method="_on_LeftController_button_release"]
+[connection signal="button_pressed" from="RightController" to="." method="_on_RightController_button_pressed"]
+[connection signal="button_release" from="RightController" to="." method="_on_RightController_button_release"]
+[connection signal="mesh_updated" from="RightController" to="." method="_on_RightController_mesh_updated"]

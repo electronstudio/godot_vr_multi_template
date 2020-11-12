@@ -13,5 +13,5 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if Input.is_action_just_pressed("fire"):
+	if Input.is_action_just_pressed("fire") or Input.is_action_just_pressed("VR_RIGHT_INDEX_TRIGGER") or Input.is_action_just_pressed("VR_LEFT_INDEX_TRIGGER"):
 		get_tree().change_scene("res://main.tscn")
