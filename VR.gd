@@ -44,17 +44,19 @@ var _joy_centered=true
 
 func _ready():
 	setup_HUD()
-	var ovr = _initialize_ovr_mobile_arvr_interface()
-	if not ovr:
-		var openvr = _initialize_openvr_arvr_interface()
-		if not openvr:
-			if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
-				var nm = _initialize_native_mobile_arvr_interface()
-				fix_hand_position = true
-			else:
-				$Headset.transform.origin.y = 1.85
-				fix_hand_position = true
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	var oculus = _initialize_oculus_arvr_interface()
+	if  not oculus:
+		var ovr = _initialize_ovr_mobile_arvr_interface()
+		if not ovr:
+			var openvr = _initialize_openvr_arvr_interface()
+			if not openvr:
+				if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
+					var nm = _initialize_native_mobile_arvr_interface()
+					fix_hand_position = true
+				else:
+					$Headset.transform.origin.y = 1.85
+					fix_hand_position = true
+					Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				
 
 func setup_HUD():
@@ -75,7 +77,7 @@ func _input(event):
 func _process(delta_t):
 	_check_and_perform_runtime_config()
 	_check_move(delta_t)
-	_check_worldscale()
+	#_check_worldscale()
 	_update_controllers_vibration(delta_t)
 	if fix_hand_position: 
 		_process_mouse_rotation()
@@ -160,29 +162,48 @@ func _initialize_native_mobile_arvr_interface():
 		arvr_interface.oversample = 2.0
 		print("success")
 		return true
-	print("fail to init")
+	print("fail to initialize native mobile")
 	return false
 
 func _initialize_openvr_arvr_interface():
+	print("initialize_openvr_arvr_interface")
 	var arvr_interface = ARVRServer.find_interface("OpenVR")
 	if !arvr_interface:
 		print("Couldn't find OpenVR interface")
-	else:
-		if arvr_interface.initialize():
+	elif arvr_interface.initialize():
 			get_viewport().arvr = true
 			get_viewport().keep_3d_linear = true
 			OS.vsync_enabled = false
 			Engine.target_fps = 90	
 			Engine.iterations_per_second = 90
-			$LeftController/left_hand_model.translation = Vector3(0,0,0.2)
-			$LeftController/left_hand_model.rotation_degrees = Vector3(0,-90,220)
-			$RightController/right_hand_model.translation = Vector3(0,0,0.2)
-			$RightController/right_hand_model.rotation_degrees = Vector3(0,-90,40)
+			$LeftController/LeftHandModel.translation = Vector3(0,0,0.2)
+			$LeftController/LeftHandModel.rotation_degrees = Vector3(0,-90,220)
+			$RightController/RightHandModel.translation = Vector3(0,0,0.2)
+			$RightController/RightHandModel.rotation_degrees = Vector3(0,-90,40)
+			print("openvr initialized")
 			return true
-		else:
-			print("Couldn't initialize OpenVR")
+	print("Couldn't initialize OpenVR")
 	return false
 
+func _initialize_oculus_arvr_interface():
+	print("initialize_oculus_arvr_interface")
+	var arvr_interface = ARVRServer.find_interface("Oculus")
+	if !arvr_interface:
+		print("Couldn't find Oculus interface")
+	elif arvr_interface.initialize():
+			get_viewport().arvr = true
+			get_viewport().keep_3d_linear = true
+			OS.vsync_enabled = false
+			Engine.target_fps = 90	
+			Engine.iterations_per_second = 90
+			$LeftController/LeftHandModel.translation = Vector3(0,0,0.2)
+			$LeftController/LeftHandModel.rotation_degrees = Vector3(0,-90,220)
+			$RightController/RightHandModel.translation = Vector3(0,0,0.2)
+			$RightController/RightHandModel.rotation_degrees = Vector3(0,-90,40)
+			print("oculus initialized")
+			return true
+	print("Couldn't initialize Oculus")
+	return false
 
 func _initialize_ovr_mobile_arvr_interface():
 	var arvr_interface = ARVRServer.find_interface("OVRMobile")
@@ -219,9 +240,8 @@ func _initialize_ovr_mobile_arvr_interface():
 
 			print("Loaded OVRMobile")
 			return true
-		else:
-			print("Failed to enable OVRMobile")
-			return false
+	print("Failed to enable OVRMobile")
+	return false
 
 func _connect_to_signals():
 	if Engine.has_singleton("OVRMobile"):
@@ -334,13 +354,13 @@ func _update_controllers_vibration(delta_t):
 				controllers_vibration_duration[tracker.get_tracker_id()] = remaining_duration
 
 
-func _check_worldscale():
-	if was_world_scale != world_scale:
-		was_world_scale = world_scale
-		var inv_world_scale = 1.0 / was_world_scale
-		var controller_scale = Vector3(inv_world_scale, inv_world_scale, inv_world_scale)
-		$"LeftController/left-controller".scale = controller_scale
-		$"RightController/right-controller".scale = -controller_scale
+#func _check_worldscale():
+#	if was_world_scale != world_scale:
+#		was_world_scale = world_scale
+#		var inv_world_scale = 1.0 / was_world_scale
+#		var controller_scale = Vector3(inv_world_scale, inv_world_scale, inv_world_scale)
+#		$"LeftController/left-controller".scale = controller_scale
+#		$"RightController/right-controller".scale = -controller_scale
 
 
 
@@ -381,7 +401,7 @@ func _on_LeftController_button_pressed(button):
 	# _start_controller_vibration($LeftController, 100, 1)
 	
 	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
-	print("ACTION: "+action)
+	print("PRESSED "+action+" ")
 	Input.action_press(action)
 	
 #	var ia = InputEventJoypadButton.new()
@@ -392,7 +412,10 @@ func _on_LeftController_button_pressed(button):
 #	get_tree().root.input(ia)
 	
 	
-	#if (button == CONTROLLER_BUTTON.YB):
+	if (button == CONTROLLER_BUTTON.YB):
+		print("rumble test")
+		#$LeftController.set_rumble(1.0)
+		_start_controller_vibration($LeftController, 1000, 1)
 	#	ARVRServer.center_on_hmd(true, true)
 #		# examples on using the ovr api from gdscript
 #		if (ovr_guardian_system):
@@ -429,10 +452,14 @@ func _on_LeftController_button_pressed(button):
 #		_start_controller_vibration($LeftController, 40, 0.5)
 
 func _on_RightController_button_pressed(button):
-	#_start_controller_vibration($RightController, 100, 1)
+	
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
-	#print("ACTION: "+action)
-	Input.action_press(action)	
+	print("PRESSED: "+action)
+	Input.action_press(action)
+	
+	if (button == CONTROLLER_BUTTON.YB):
+		print("rumble test")
+		_start_controller_vibration($RightController, 1000, 1)
 
 #	if (button == CONTROLLER_BUTTON.YB):
 #		if (ovr_utilities):
@@ -446,6 +473,7 @@ func _on_RightController_button_pressed(button):
 
 func _on_RightController_button_release(button):
 	var action = "VR_RIGHT_"+CONTROLLER_BUTTON.keys()[button]
+	print("RELEASED: "+action)
 	Input.action_release(action)	
 #	if (button != CONTROLLER_BUTTON.YB): return;
 #
@@ -456,8 +484,14 @@ func _on_RightController_button_release(button):
 
 
 func _on_LeftController_button_release(button):
-	Input.action_release("VR_LEFT_"+CONTROLLER_BUTTON.keys()[button])
+	var action = "VR_LEFT_"+CONTROLLER_BUTTON.keys()[button]
+	print("RELEASED: "+action)
+	Input.action_release(action)
 
 
 func _on_RightController_mesh_updated(mesh):
-	print("MESH UPDATED "+mesh)
+	print("RIGHT MESH UPDATED "+mesh)
+
+
+func _on_LeftController_mesh_updated(mesh):
+	print("LEFT MESH UPDATED "+mesh)

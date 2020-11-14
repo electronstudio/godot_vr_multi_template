@@ -48,5 +48,6 @@ environment = SubResource( 3 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0202332 )
 mesh = SubResource( 5 )
 material/0 = null
+[connection signal="mesh_updated" from="VR/LeftController" to="VR" method="_on_LeftController_mesh_updated"]
 
 [editable path="VR"]
