@@ -1,4 +1,6 @@
 # To view log/print messages use `adb logcat -s godot:* GodotOVRMobile:*` from a command prompt
+# TODO: test vibration
+# Fix Viewport errors
 extends ARVROrigin
 
 var ovr_init_config = null;
