@@ -19,7 +19,11 @@ var was_world_scale = 1.0
 
 var fix_hand_position = false
 
-export var mobile_test = false
+export var enable_oculus_vr = true
+export var enable_mobile_vr = true
+export var force_mobile_vr = false
+export var enable_openvr = true
+export var enable_oculus_mobile_vr = true
 
 
 var _mouse_offset = Vector2()
@@ -44,25 +48,29 @@ export var quick_turn_degrees=45
 var _joy_centered=true
 
 
+
 func _ready():
 	setup_HUD()
-	var oculus = _initialize_oculus_arvr_interface()
-	if  not oculus:
-		var ovr = _initialize_ovr_mobile_arvr_interface()
-		if not ovr:
-			var openvr = _initialize_openvr_arvr_interface()
-			if not openvr:
-				if mobile_test or OS.get_name()=="Android" or OS.get_name()=="iOS":
-					var nm = _initialize_native_mobile_arvr_interface()
-					fix_hand_position = true
-				else:
-					$Headset.transform.origin.y = 1.85
-					fix_hand_position = true
-					Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if enable_oculus_vr and _initialize_oculus_arvr_interface():
+		return
+	if enable_oculus_mobile_vr and _initialize_ovr_mobile_arvr_interface():
+		return
+	if enable_openvr and _initialize_openvr_arvr_interface():
+		return
+	if enable_mobile_vr and _initialize_native_mobile_arvr_interface():
+		return
+	_initialize_flatscreen()
+
+		
 				
 
 func setup_HUD():
 	$Headset/HUD.get_surface_material(0).get_texture(0).set_viewport_path_in_scene(str(self.get_path())+"/Headset/HUD/Viewport")
+
+func _initialize_flatscreen():
+	$Headset.transform.origin.y = 1.85
+	fix_hand_position = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -153,6 +161,9 @@ func _process_keys():
 
 func _initialize_native_mobile_arvr_interface():
 	print("initialize_native_mobile_arvr_interface")
+	if not force_mobile_vr and OS.get_name()!="Android" and OS.get_name()!="iOS":
+		print("not trying native mobile interface because wrong platform")
+		return
 	var arvr_interface = ARVRServer.find_interface("Native mobile")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
@@ -162,6 +173,7 @@ func _initialize_native_mobile_arvr_interface():
 		arvr_interface.k1 = 0.0404 # 0.40400490164756775
 		arvr_interface.k2 = 0.0484715 # 0.4847533404827118
 		arvr_interface.oversample = 2.0
+		fix_hand_position = true
 		print("success")
 		return true
 	print("fail to initialize native mobile")
@@ -459,9 +471,9 @@ func _on_RightController_button_pressed(button):
 	print("PRESSED: "+action)
 	Input.action_press(action)
 	
-	if (button == CONTROLLER_BUTTON.YB):
-		print("rumble test")
-		_start_controller_vibration($RightController, 1000, 1)
+#	if (button == CONTROLLER_BUTTON.YB):
+#		print("rumble test")
+#		_start_controller_vibration($RightController, 1000, 1)
 
 #	if (button == CONTROLLER_BUTTON.YB):
 #		if (ovr_utilities):
