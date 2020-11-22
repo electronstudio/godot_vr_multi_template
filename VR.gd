@@ -210,10 +210,10 @@ func _initialize_oculus_arvr_interface():
 			OS.vsync_enabled = false
 			Engine.target_fps = 90	
 			Engine.iterations_per_second = 90
-			$LeftController/LeftHandModel.translation = Vector3(0,0,0.2)
-			$LeftController/LeftHandModel.rotation_degrees = Vector3(0,-90,220)
-			$RightController/RightHandModel.translation = Vector3(0,0,0.2)
-			$RightController/RightHandModel.rotation_degrees = Vector3(0,-90,40)
+#			$LeftController/LeftHandModel.translation = Vector3(0,0,0.2)
+#			$LeftController/LeftHandModel.rotation_degrees = Vector3(0,-90,220)
+#			$RightController/RightHandModel.translation = Vector3(0,0,0.2)
+#			$RightController/RightHandModel.rotation_degrees = Vector3(0,-90,40)
 			print("oculus initialized")
 			return true
 	print("Couldn't initialize Oculus")
