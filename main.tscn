@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://VR.tscn" type="PackedScene" id=1]
+[ext_resource path="res://vr/VR.tscn" type="PackedScene" id=1]
 [ext_resource path="res://models/blasters/blasterI.glb" type="PackedScene" id=2]
 [ext_resource path="res://models/blasters/blasterH.glb" type="PackedScene" id=3]
 [ext_resource path="res://HUD.tscn" type="PackedScene" id=4]
@@ -9,6 +9,7 @@
 [ext_resource path="res://textures/skymaps/night_free_Ref2.jpg" type="Texture" id=7]
 [ext_resource path="res://Level.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Gun.tscn" type="PackedScene" id=9]
+
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("VR/Headset/HUD/Viewport")
