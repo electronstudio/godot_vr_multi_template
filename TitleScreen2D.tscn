@@ -1,6 +1,5 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://interface/fonts/kenvector_future_32.tres" type="DynamicFont" id=1]
 [ext_resource path="res://TitleScreen2D.gd" type="Script" id=2]
 
 [node name="TitleScreen2D" type="Control"]
@@ -16,5 +15,7 @@ margin_left = 722.866
 margin_top = 395.107
 margin_right = 1232.87
 margin_bottom = 431.107
-custom_fonts/font = ExtResource( 1 )
 text = "PRESS BUTTON TO START"
+__meta__ = {
+"_edit_use_anchors_": false
+}

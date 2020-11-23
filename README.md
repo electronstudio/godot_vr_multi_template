@@ -1,11 +1,10 @@
 # godot_vr_multi_template
 
-Eventually this will be more of a generalized template, currently it's a simple wave shooter.
-
 Supports:
+* Oculus PC
 * Oculus Quest
-* Steam VR
+* Steam VR PC
 * Google Cardboard
 * Flatscreen
 
-You can play current flatscreen build here https://electronstudio.github.io/godot_vr_multi_template/
+For a game using this template see https://github.com/electronstudio/godot_vr_wave_shooter
